@@ -1,28 +1,31 @@
-const todoSchema = require("../modals/todoSchema");
+//import th model
+const Todo = require("../models/Todo");
 
-exports.createTodo = async(req, res) => {
-    try{
-        // data fetch from request body
-        const { title, discription } = req.body;
-        
-        // create new todo object and insert in mongo DB
-        const responce = await todoSchema.create({ title, discription });
+//define route handler
 
-        // send successfull responce
-        res.status(200).json({
-            success: true,
-            data: responce, 
-            massage: "todo responce created successfully",
-        })
+exports.createTodo = async(req,res) => {
+    try {
+            //extract title and desxcription from reauest body
+            const {title,description} = req.body;
+            //create a new Todo Obj and insert in DB
+            const response = await Todo.create({title,description});
+            //send a json response with a success flag
+            res.status(200).json(
+                {
+                    success:true,
+                    data:response,
+                    message:'Entry Created Successfully'
+                }
+            );
     }
-    catch(error){
-        console.log(error);
-        console.error(error);
-        res.status(500).json({
-            success: false,
-            data: "internal servre error",
-            massage: error.massage,
+    catch(err) {
+        console.error(err);
+        console.log(err);
+        res.status(500)
+        .json({
+            success:false,
+            data:"internal server error",
+            message:err.message,
         })
     }
 }
-

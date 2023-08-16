@@ -23,5 +23,4 @@ const todoSchema = new mongoose.Schema({
     },
 });
 
-const Todo = mongoose.model("Todo", todoSchema); // Capitalized model name
-module.exports = Todo; // Export the capitalized model name
+module.exports = mongoose.model("Todo", todoSchema); // Capitalized model name
