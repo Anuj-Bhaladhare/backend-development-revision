@@ -8,7 +8,6 @@ exports.autho = async (req, res, next) => {
     const token =
       req.cookies.token ||
       req.body.token ||
-      req.body.token ||
       req.header("Authorization").replace("Bearer ", "");
 
     if (!token || token === undefined) {
@@ -29,6 +28,7 @@ exports.autho = async (req, res, next) => {
         massage: "token is invalide",
       });
     }
+    next();
   } 
   catch (error) {
     return res.status(401).json({

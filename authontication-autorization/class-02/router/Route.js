@@ -9,7 +9,7 @@ router.post("/login", login);
 
 // testing the protected route
 // -----------------------------------------------
-router.get("/autho", autho, (req, res) => {
+router.get("/test", autho, (req, res) => {
     res.json({
         success: true,
         massage: "Welcome to the Protected route for TESTS",

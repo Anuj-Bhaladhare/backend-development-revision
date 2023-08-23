@@ -1,6 +1,7 @@
 const User = require("../modals/User");
 const bcrypt = require("bcrypt");
-const jsonwebtoken = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
+// const { options } = require("../routes/user");
 require("dotenv").config();
 
 // ----------------Sign Up handaler ---------------
@@ -65,7 +66,7 @@ const login = async (req, res) => {
         }
 
         // Find user by email
-        const user = await User.findOne({ email });
+        let user = await User.findOne({ email });
         if (!user) {
             return res.status(401).json({
                 success: false,
@@ -103,8 +104,16 @@ const login = async (req, res) => {
                 user,
                 message: "User login successful",
             });
+
+                // res.status(200).json({
+                //     success:true,
+                //     token,
+                //     user,
+                //     message:'User Logged in successfully',
+                // });
         } 
         else {
+            // password do not match
             return res.status(403).json({
                 success: false,
                 message: "Invalid Email or Password",
