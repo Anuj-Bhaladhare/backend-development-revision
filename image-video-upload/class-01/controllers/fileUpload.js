@@ -54,8 +54,13 @@ exports.localFileUpload = async (req, res) => {
 
 const supportedFileType = ["jpg", "jpeg", "png"];
 
-const cloudinaryFileUpload = async (file, folder) => {
+const cloudinaryFileUpload = async (file, folder, quality) => {
     const options = { folder, resource_type: "auto" };
+
+    if(quality) {
+        options.quality = quality;
+    }
+    
     return await cloudinary.uploader.upload(file.tempFilePath, options);
 };
 
@@ -134,8 +139,8 @@ exports.videoUpload = async(req, res) => {
         const videoFetch = await File.create({
             name,
             tags,
-            videoUrl: videoResponce.secure_url,
             email,
+            videoUrl: videoResponce.secure_url,
         })
          res.json({
             success: true,
@@ -154,9 +159,46 @@ exports.videoUpload = async(req, res) => {
 
 exports.fileQualityReduce = async(req, res) => {
     try{
-         
+        //  fetch data
+        const {name, tags, email } = req.body;
+
+        const file = req.files.compressFile;
+
+        const allFileFormate = ["jpg", "jpeg", "png", "mp4", "mkv", "mov"];
+        const allFileType = file.name.split(".")[1].toLowerCase();
+        const allFileFormateSupported = allFileFormate.includes(allFileType);
+
+        if(!allFileFormateSupported){
+            return res.status(400).json({
+                success: true,
+                massage: "File formate is not supported",
+            })
+        }
+
+        // reduce size and upload to cloudnerry
+        const allResponce = await cloudinaryFileUpload(file, "sample-trying", 50);
+
+
+        // create entry to database
+        const fetchAllFile = await File.create({
+            name,
+            tags,
+            email,
+            fileUrl: secure_url,
+        })
+
+        // successfill responce
+        res.json({
+            success: true,
+            url: secure_url,
+            massage: "File uploaded successfully"
+        })
     }
     catch(error){
-
+        console.error(error);
+        res.status(400).json({
+            success:false,
+            message:'Something went wrong',
+        })
     }
 }
